@@ -63,14 +63,25 @@ end
 
 -- Wallpaper setup
 --------------------------------------------------------------------------------
-env.wallpaper = function(s)
-	if beautiful.wallpaper then
-		if awful.util.file_readable(beautiful.wallpaper) then
-			gears.wallpaper.maximized(beautiful.wallpaper, s, true)
-		else
-			gears.wallpaper.set(beautiful.color.bg)
-		end
-	end
+env.wallpaper = function(s, walldir)
+  -- Choose random wallpaper 
+  math.randomseed(os.time())
+  pictures = assert(io.popen("ls " .. env.themedir .. walldir .. "/*.jpg"))
+  wallpaper = {}
+  for jpg in pictures:lines() do wallpaper[#wallpaper +1] = jpg end
+  trgt_wallpaper = wallpaper[math.random(1, #wallpaper)]
+
+  io.output(io.open("/tmp/awesome.txt", "a"))
+  io.write( "trgt wallpaper: " .. walldir .. "  " .. trgt_wallpaper)
+  io.close()
+
+  -- Apply wallpaper
+  if gears.filesystem.file_readable(trgt_wallpaper) then
+    gears.wallpaper.maximized(trgt_wallpaper, s, true)
+  else
+    gears.wallpaper.set(beautiful.color.bg)
+  end
+
 end
 
 -- Tag tooltip text generation
@@ -99,6 +110,18 @@ env.wrapper = function(widget, name, buttons)
 end
 
 
+-- Keyboard Layout
+--------------------------------------------------------------------------------
+env.kdbLayout = function(map)
+  if 'fr' == map then
+    awful.spawn.with_shell("setxkbmap -layout fr")
+  else -- Default to dvp
+    awful.spawn.with_shell("setxkbmap -layout us -variant dvp")
+    awful.spawn.with_shell("xmodmap -e \"keycode 94 = eacute egrave\"")
+    awful.spawn.with_shell("xmodmap -e \"clear lock\"")
+    awful.spawn.with_shell("xmodmap -e \"keycode 66 = Super_L agrave\"")
+  end
+end
 -- End
 -----------------------------------------------------------------------------------------------------------------------
 return env

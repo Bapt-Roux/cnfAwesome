@@ -24,7 +24,13 @@ function autostart.run()
 	-- awful.spawn.with_shell("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
 
 	-- keyboard layouts
-	awful.spawn.with_shell("setxkbmap -layout us -variant dvp")
+  awful.spawn.with_shell("setxkbmap -layout us -variant dvp")
+  awful.spawn.with_shell("xmodmap -e \"keycode 94 = eacute egrave\"")
+  awful.spawn.with_shell("xmodmap -e \"clear lock\"")
+  awful.spawn.with_shell("xmodmap -e \"keycode 66 = Super_L agrave\"")
+
+  -- Left screen rotate
+  awful.spawn.with_shell("xrandr --output DP-2 --rotate left")
 
 	-- apps
 	-- awful.spawn.with_shell("clipflap")
